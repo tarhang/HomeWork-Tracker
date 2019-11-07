@@ -1,6 +1,6 @@
 # folders
 /venv
-/idea	
+/.idea
 
 # files
 test.py
