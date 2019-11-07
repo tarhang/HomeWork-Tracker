@@ -160,9 +160,7 @@ class Person(object):
         Returns the average number of data recordings in a day
         :return: float, average number of data recordings in a day
         """
-        start = self.start_times[0] - timedelta(1)
-        finish = self.start_times[-1] + timedelta(1)
-        num_days = self.__num_days(start, finish)
+        num_days = self.__num_days(self.start_times[0], self.start_times[-1])
         return len(self.start_times) / num_days
 
     def avg_num_recordings_in_period(self, start, finish):
@@ -236,14 +234,14 @@ class Person(object):
 
         return distances
 
-    def median_time_spent_at_loc(self):
+    def median_time_at_loc(self):
         """ (self: Person) -> float
         Returns the median time spent at all locations visited
         :return: float, median time spent at a location (measured in s)
         """
         return np.median(self.durations)
 
-    def avg_time_spent_at_loc(self):
+    def avg_time_at_loc(self):
         """ (self: Person) -> float
         Returns the average time spent at a location
         :return: float, average time spent at a location (measured in s)
@@ -255,4 +253,7 @@ if __name__ == '__main__':
     filename = 'data/person1.csv'
     p = Person(filename)
 
-    avg_places = p.avg_num_recordings_per_day()
+    print(p.avg_num_recordings_per_day())
+    start = p.start_times[12]
+    finish = p.start_times[12]
+    print(p.avg_num_recordings_in_period(start, finish))

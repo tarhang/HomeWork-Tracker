@@ -28,8 +28,16 @@ class TestPerson(unittest.TestCase):
         self.assertRaises(FileNotFoundError, Person, fake_filename)
 
     def test_avg_num_recordings_per_day(self):
-        avg_num_places = 6.0256410256410255
+        avg_num_places = 6.949367088607595
         self.assertAlmostEqual(self.p1.avg_num_recordings_per_day(), avg_num_places)
+
+    def test_avg_num_recordings_in_period(self):
+        s = self.p1.start_times[12]
+        f1 = self.p1.start_times[12]
+        f2 = self.p1.start_times[13]
+
+        self.assertAlmostEqual(self.p1.avg_num_recordings_in_period(s, f1), 1)
+        self.assertAlmostEqual(self.p1.avg_num_recordings_in_period(s, f2), 2)
 
     def test_median_dist_between_coordinates(self):
         med_d = 0.46527191751212393
@@ -39,13 +47,13 @@ class TestPerson(unittest.TestCase):
         avg_dist = 34.738759700908595
         self.assertAlmostEqual(self.p1.avg_dist_between_coordinate(), avg_dist)
 
-    def test_median_time_spent_at_loc(self):
+    def test_median_time_at_loc(self):
         med_time = 1186.491
-        self.assertAlmostEqual(self.p1.median_time_spent_at_loc(), med_time)
+        self.assertAlmostEqual(self.p1.median_time_at_loc(), med_time)
 
-    def test_avg_time_spent_at_loc(self):
+    def test_avg_time_at_loc(self):
         avg_time = 10420.86867941712
-        self.assertAlmostEqual(self.p1.avg_time_spent_at_loc(), avg_time)
+        self.assertAlmostEqual(self.p1.avg_time_at_loc(), avg_time)
 
 
 if __name__ == '__main__':
