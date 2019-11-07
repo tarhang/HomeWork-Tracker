@@ -4,7 +4,7 @@ from timezonefinder import TimezoneFinder
 import pytz
 from datetime import datetime, timedelta
 from dateutil.tz import tzoffset
-from math import sin, cos, atan2, sqrt
+from math import sin, cos, atan2, sqrt, radians
 
 
 class Person(object):
@@ -131,11 +131,90 @@ class Person(object):
 
         return dt
 
+    def avg_num_places_per_day(self):
+        """ (self: Person) -> float
+        Returns the average number of places a person visited in a day
+        :return: float, average number of locations visited in a day
+        """
+        num_places = 0
+        num_days = 0
+        prev_day = None
+
+        # looping through the person's location logs
+        for dt in self.start_times:
+            if prev_day is None:
+                prev_day = dt.date()
+            elif dt.date() == prev_day:
+                num_places += 1
+            else:
+                prev_day = dt.date()
+                num_days += 1
+
+        return num_places / num_days
+
+    def median_dist_between_coordinates(self):
+        """ (self: Person) -> float
+        Returns the median distance traveled between two consecutive locations
+        :return: float, median distance traveled between consecutive locations
+        """
+        return np.median(self.__all_distances())
+
+    def avg_dist_between_coordinate(self):
+        """ (self: Person) -> float
+        Returns the average distance traveled between two consecutive locations
+        :return: float, average distance traveled between consecutive locations
+        """
+        return np.average(self.__all_distances())
+
+    @staticmethod
+    def __distance(p1, p2):
+        """ (np.array, np.array) -> float
+        Computes the distance, in km, between two coordinates (latitude,
+        longitude).
+        :param p1: np.array, of shape (1,2) representing (latitude,
+        longitude) for the first point
+        :param p2: np.array, of shape (1,2) representing (latitude,
+        longitude) for the second point
+        :return: float, distance, in km, between the two coordinates
+        """
+        radius = 6373.0  # radius of the earth
+        dlat = radians(p1[0] - p2[0])
+        dlong = radians(p1[1] - p2[1])
+        alpha = radians(p1[0])
+        beta = radians(p2[0])
+
+        # computing the distance between the current and previous coordinates
+        temp = sin(dlat/2) ** 2 + cos(alpha) * cos(beta) * sin(dlong/2) ** 2
+        return radius * (2 * atan2(sqrt(temp), sqrt(1 - temp)))
+
+    def __all_distances(self):
+        """ (self: Person) -> np.array
+        Computes the distance travelled between consecutive locations.
+        The returned array is of shape (number of places visited - 1,)
+        :return: np.array, where element i is the distance between location[
+        i] and location[i+1] visited
+        """
+
+        # to hold the distance between consecutive locations visited
+        distances = np.zeros(self.locations.shape[0] - 1)
+
+        # looping through the (lat, long) pairs, computing their distance
+        for i in range(1, self.locations.shape[0]):
+            prev = self.locations[i - 1, :]
+            current = self.locations[i, :]
+            distances[i - 1] = self.__distance(prev, current)
+
+        return distances
 
 
 if __name__ == '__main__':
     filename = 'data/person1.csv'
     p = Person(filename)
-    print(p.locations.shape)
-    print(len(p.start_times))
-    print(p.durations.shape)
+    avg_places = p.avg_num_places_per_day()
+    median_dist = p.median_dist_between_coordinates()
+    avg_dist = p.avg_dist_between_coordinate()
+
+    print(avg_places)
+    print(median_dist)
+    print(avg_dist)
+
