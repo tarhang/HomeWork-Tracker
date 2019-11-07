@@ -1,0 +1,6 @@
+# folders
+/venv
+/.idea	
+
+# files
+test.py
