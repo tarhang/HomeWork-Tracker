@@ -27,9 +27,9 @@ class TestPerson(unittest.TestCase):
         fake_filename = 'data/fake.csv'
         self.assertRaises(FileNotFoundError, Person, fake_filename)
 
-    def test_avg_num_places_per_day(self):
+    def test_avg_num_recordings_per_day(self):
         avg_num_places = 6.0256410256410255
-        self.assertAlmostEqual(self.p1.avg_num_places_per_day(), avg_num_places)
+        self.assertAlmostEqual(self.p1.avg_num_recordings_per_day(), avg_num_places)
 
     def test_median_dist_between_coordinates(self):
         med_d = 0.46527191751212393
@@ -38,6 +38,14 @@ class TestPerson(unittest.TestCase):
     def test_avg_dist_between_coordinate(self):
         avg_dist = 34.738759700908595
         self.assertAlmostEqual(self.p1.avg_dist_between_coordinate(), avg_dist)
+
+    def test_median_time_spent_at_loc(self):
+        med_time = 1186.491
+        self.assertAlmostEqual(self.p1.median_time_spent_at_loc(), med_time)
+
+    def test_avg_time_spent_at_loc(self):
+        avg_time = 10420.86867941712
+        self.assertAlmostEqual(self.p1.avg_time_spent_at_loc(), avg_time)
 
 
 if __name__ == '__main__':

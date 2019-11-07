@@ -131,26 +131,56 @@ class Person(object):
 
         return dt
 
-    def avg_num_places_per_day(self):
-        """ (self: Person) -> float
-        Returns the average number of places a person visited in a day
-        :return: float, average number of locations visited in a day
+    def __num_days(self, start, finish):
         """
-        num_places = 0
+        Returns the number of days with location recordings in the double
+        sided inclusive period
+        given
+        :param start: datetime, start of the period
+        :param finish: datetime, end of the period
+        :return: int, number of days with location recordings in the period
+        indicated by start and end
+        """
         num_days = 0
-        prev_day = None
+        prev_date = None
 
-        # looping through the person's location logs
         for dt in self.start_times:
-            if prev_day is None:
-                prev_day = dt.date()
-            elif dt.date() == prev_day:
-                num_places += 1
-            else:
-                prev_day = dt.date()
-                num_days += 1
+            if start <= dt <= finish:
+                if prev_date is None:
+                    prev_date = dt.date()
+                    num_days = 1
+                elif dt.date() != prev_date:
+                    prev_date = dt.date()
+                    num_days += 1
 
-        return num_places / num_days
+        return num_days
+
+    def avg_num_recordings_per_day(self):
+        """ (self: Person) -> float
+        Returns the average number of data recordings in a day
+        :return: float, average number of data recordings in a day
+        """
+        start = self.start_times[0] - timedelta(1)
+        finish = self.start_times[-1] + timedelta(1)
+        num_days = self.__num_days(start, finish)
+        return len(self.start_times) / num_days
+
+    def avg_num_recordings_in_period(self, start, finish):
+        """ (self: Person, datetime, datetime) -> float
+        Returns the average number of places visited a day during the period
+        of time provided
+        :param start: datetime, indicating the start of the period
+        :param finish: datetime, indicating the end of the period
+        :return: float, average number of places visited per day during period
+        """
+        num_days = self.__num_days(start, finish)
+        num_recordings = 0
+
+        for dt in self.start_times:
+            if start <= dt <= finish:
+                num_recordings += 1
+
+        return num_recordings / num_days
 
     def median_dist_between_coordinates(self):
         """ (self: Person) -> float
@@ -170,7 +200,7 @@ class Person(object):
     def __distance(p1, p2):
         """ (np.array, np.array) -> float
         Computes the distance, in km, between two coordinates (latitude,
-        longitude).
+        longitude) using the Haversine formula.
         :param p1: np.array, of shape (1,2) representing (latitude,
         longitude) for the first point
         :param p2: np.array, of shape (1,2) representing (latitude,
@@ -206,15 +236,23 @@ class Person(object):
 
         return distances
 
+    def median_time_spent_at_loc(self):
+        """ (self: Person) -> float
+        Returns the median time spent at all locations visited
+        :return: float, median time spent at a location (measured in s)
+        """
+        return np.median(self.durations)
+
+    def avg_time_spent_at_loc(self):
+        """ (self: Person) -> float
+        Returns the average time spent at a location
+        :return: float, average time spent at a location (measured in s)
+        """
+        return np.average(self.durations)
+
 
 if __name__ == '__main__':
     filename = 'data/person1.csv'
     p = Person(filename)
-    avg_places = p.avg_num_places_per_day()
-    median_dist = p.median_dist_between_coordinates()
-    avg_dist = p.avg_dist_between_coordinate()
 
-    print(avg_places)
-    print(median_dist)
-    print(avg_dist)
-
+    avg_places = p.avg_num_recordings_per_day()
