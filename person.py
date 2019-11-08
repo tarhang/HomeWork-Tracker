@@ -248,7 +248,6 @@ class Person(object):
         """
         return np.average(self.durations)
 
-# this is to indicate master branch
 
 if __name__ == '__main__':
     filename = 'data/person1.csv'
