@@ -248,6 +248,7 @@ class Person(object):
         """
         return np.average(self.durations)
 
+# commenting here to indidcate featureMap
 
 if __name__ == '__main__':
     filename = 'data/person1.csv'
