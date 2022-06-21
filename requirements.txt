@@ -1,6 +1,6 @@
 dateutils==0.6.7
 importlib-resources==1.0.2
-numpy==1.17.3
+numpy==1.22.0
 python-dateutil==2.8.1
 pytz==2019.3
 six==1.13.0
